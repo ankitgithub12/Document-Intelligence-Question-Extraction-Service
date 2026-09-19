@@ -1,0 +1,185 @@
+{
+  "info": {
+    "name": "Document Intelligence Service",
+    "description": "Complete API collection for the Document Intelligence & Question Extraction Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key": "base_url", "value": "http://localhost:8000", "type": "string"},
+    {"key": "token", "value": "", "type": "string"},
+    {"key": "document_id", "value": "", "type": "string"},
+    {"key": "question_id", "value": "", "type": "string"},
+    {"key": "review_item_id", "value": "", "type": "string"},
+    {"key": "related_document_id", "value": "", "type": "string"}
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.data && json.data.access_token) {", "  pm.collectionVariables.set('token', json.data.access_token);", "}"]}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"email\": \"test@example.com\", \"password\": \"password123\"}"},
+            "url": {"raw": "{{base_url}}/api/v1/auth/register", "host": ["{{base_url}}"], "path": ["api", "v1", "auth", "register"]}
+          }
+        },
+        {
+          "name": "Login",
+          "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.data && json.data.access_token) {", "  pm.collectionVariables.set('token', json.data.access_token);", "}"]}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"email\": \"test@example.com\", \"password\": \"password123\"}"},
+            "url": {"raw": "{{base_url}}/api/v1/auth/login", "host": ["{{base_url}}"], "path": ["api", "v1", "auth", "login"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Upload PDF",
+          "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.data && json.data.document_id) {", "  pm.collectionVariables.set('document_id', json.data.document_id);", "}"]}}],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {"mode": "formdata", "formdata": [{"key": "file", "type": "file", "src": ""}]},
+            "url": {"raw": "{{base_url}}/api/v1/documents", "host": ["{{base_url}}"], "path": ["api", "v1", "documents"]}
+          }
+        },
+        {
+          "name": "Upload Image",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "body": {"mode": "formdata", "formdata": [{"key": "file", "type": "file", "src": ""}]},
+            "url": {"raw": "{{base_url}}/api/v1/documents", "host": ["{{base_url}}"], "path": ["api", "v1", "documents"]}
+          }
+        },
+        {
+          "name": "List Documents",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents?page=1&page_size=20", "host": ["{{base_url}}"], "path": ["api", "v1", "documents"], "query": [{"key": "page", "value": "1"}, {"key": "page_size", "value": "20"}]}
+          }
+        },
+        {
+          "name": "Get Document",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}"]}
+          }
+        },
+        {
+          "name": "Get Document Status",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}/status", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}", "status"]}
+          }
+        },
+        {
+          "name": "Delete Document",
+          "request": {
+            "method": "DELETE",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Questions",
+      "item": [
+        {
+          "name": "Get Questions for Document",
+          "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.data && json.data.length > 0) {", "  pm.collectionVariables.set('question_id', json.data[0].id);", "}"]}}],
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}/questions", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}", "questions"]}
+          }
+        },
+        {
+          "name": "Get Question Detail",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/questions/{{question_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "questions", "{{question_id}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Answers",
+      "item": [
+        {
+          "name": "Get Answers for Document",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}/answers", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}", "answers"]}
+          }
+        },
+        {
+          "name": "Get Answer for Question",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/questions/{{question_id}}/answer", "host": ["{{base_url}}"], "path": ["api", "v1", "questions", "{{question_id}}", "answer"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Review Items",
+      "item": [
+        {
+          "name": "Get Review Items for Document",
+          "event": [{"listen": "test", "script": {"exec": ["var json = pm.response.json();", "if (json.data && json.data.length > 0) {", "  pm.collectionVariables.set('review_item_id', json.data[0].id);", "}"]}}],
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}/review-items", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}", "review-items"]}
+          }
+        },
+        {
+          "name": "Get Review Item Detail",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/review-items/{{review_item_id}}", "host": ["{{base_url}}"], "path": ["api", "v1", "review-items", "{{review_item_id}}"]}
+          }
+        }
+      ]
+    },
+    {
+      "name": "Relationships",
+      "item": [
+        {
+          "name": "Create Relationship",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}, {"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"related_document_id\": \"{{related_document_id}}\", \"relationship_type\": \"ANSWER_KEY\"}"},
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}/relationships", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}", "relationships"]}
+          }
+        },
+        {
+          "name": "Get Relationships",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{token}}"}],
+            "url": {"raw": "{{base_url}}/api/v1/documents/{{document_id}}/relationships", "host": ["{{base_url}}"], "path": ["api", "v1", "documents", "{{document_id}}", "relationships"]}
+          }
+        }
+      ]
+    }
+  ]
+}

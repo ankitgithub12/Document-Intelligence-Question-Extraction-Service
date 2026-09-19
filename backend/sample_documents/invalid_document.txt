@@ -1,0 +1,2 @@
+This is not a valid PDF or image file.
+It should be rejected by the system.

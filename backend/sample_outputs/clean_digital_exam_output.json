@@ -1,0 +1,125 @@
+{
+  "document": {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
+    "original_filename": "clean_digital_exam.pdf",
+    "file_type": "pdf",
+    "status": "COMPLETED",
+    "total_pages": 5,
+    "processed_pages": 5,
+    "question_count": 7,
+    "review_count": 1
+  },
+  "questions": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440010",
+      "document_id": "550e8400-e29b-41d4-a716-446655440001",
+      "question_number": "1",
+      "question": "What is the time complexity of binary search?",
+      "question_type": "MCQ",
+      "options": [
+        {"key": "A", "text": "O(1)"},
+        {"key": "B", "text": "O(log n)"},
+        {"key": "C", "text": "O(n)"},
+        {"key": "D", "text": "O(n log n)"}
+      ],
+      "answer": {
+        "value": "B",
+        "confidence": 1.0,
+        "source_page": 5,
+        "status": "MATCHED"
+      },
+      "source": {
+        "document": "clean_digital_exam.pdf",
+        "pages": [1]
+      },
+      "confidence": 0.95,
+      "status": "EXTRACTED",
+      "review_required": false
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440011",
+      "document_id": "550e8400-e29b-41d4-a716-446655440001",
+      "question_number": "2",
+      "question": "Which data structure uses LIFO principle?",
+      "question_type": "MCQ",
+      "options": [
+        {"key": "A", "text": "Queue"},
+        {"key": "B", "text": "Stack"},
+        {"key": "C", "text": "Array"},
+        {"key": "D", "text": "Linked List"}
+      ],
+      "answer": {
+        "value": "B",
+        "confidence": 1.0,
+        "source_page": 5,
+        "status": "MATCHED"
+      },
+      "source": {
+        "document": "clean_digital_exam.pdf",
+        "pages": [1]
+      },
+      "confidence": 0.95,
+      "status": "EXTRACTED",
+      "review_required": false
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440016",
+      "document_id": "550e8400-e29b-41d4-a716-446655440001",
+      "question_number": "6",
+      "question": "Which of the following statements is correct regarding operating systems?",
+      "question_type": "MCQ",
+      "options": [
+        {"key": "A", "text": "All operating systems are open source"},
+        {"key": "B", "text": "An OS manages both hardware and software resources"},
+        {"key": "C", "text": "Operating systems cannot handle multiple processes"},
+        {"key": "D", "text": "Device drivers are not part of the OS"}
+      ],
+      "answer": {
+        "value": "B",
+        "confidence": 1.0,
+        "source_page": 5,
+        "status": "MATCHED"
+      },
+      "source": {
+        "document": "clean_digital_exam.pdf",
+        "pages": [3, 4]
+      },
+      "confidence": 0.82,
+      "status": "PARTIAL",
+      "review_required": true
+    },
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440017",
+      "document_id": "550e8400-e29b-41d4-a716-446655440001",
+      "question_number": "7",
+      "question": "True or False: TCP is a connectionless protocol.",
+      "question_type": "TRUE_FALSE",
+      "options": [],
+      "answer": {
+        "value": "A",
+        "confidence": 0.8,
+        "source_page": 5,
+        "status": "MATCHED"
+      },
+      "source": {
+        "document": "clean_digital_exam.pdf",
+        "pages": [4]
+      },
+      "confidence": 0.88,
+      "status": "EXTRACTED",
+      "review_required": false
+    }
+  ],
+  "review_items": [
+    {
+      "id": "550e8400-e29b-41d4-a716-446655440030",
+      "document_id": "550e8400-e29b-41d4-a716-446655440001",
+      "question_id": "550e8400-e29b-41d4-a716-446655440016",
+      "issue_type": "CROSS_PAGE_MERGE",
+      "reason": "Question spans pages [3, 4] — verify merge correctness",
+      "confidence": 0.82,
+      "source_page": 3,
+      "resolved": false
+    }
+  ]
+}

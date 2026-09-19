@@ -19,17 +19,28 @@ export function AuthProvider({ children }) {
   const login = async (email, password) => {
     const res = await apiLogin(email, password)
     const { access_token, user_id } = res.data.data
-    const userData = { id: user_id, email }
+    const savedUser = JSON.parse(localStorage.getItem('user') || '{}')
+    const fallbackName = email
+      .split('@')[0]
+      .replace(/[._-]/g, ' ')
+      .replace(/\b\w/g, (l) => l.toUpperCase())
+    const name = savedUser.email === email && savedUser.full_name ? savedUser.full_name : fallbackName
+    const userData = { id: user_id, email, full_name: name }
     localStorage.setItem('token', access_token)
     localStorage.setItem('user', JSON.stringify(userData))
     setUser(userData)
     return userData
   }
 
-  const register = async (email, password) => {
+  const register = async (email, password, fullName = '') => {
     const res = await apiRegister(email, password)
     const { access_token, user_id } = res.data.data
-    const userData = { id: user_id, email }
+    const fallbackName = email
+      .split('@')[0]
+      .replace(/[._-]/g, ' ')
+      .replace(/\b\w/g, (l) => l.toUpperCase())
+    const name = fullName?.trim() || fallbackName
+    const userData = { id: user_id, email, full_name: name }
     localStorage.setItem('token', access_token)
     localStorage.setItem('user', JSON.stringify(userData))
     setUser(userData)

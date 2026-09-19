@@ -1,35 +1,40 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Search, Bell, Plus, User, LogOut, Sparkles } from 'lucide-react';
+import { Search, Bell, Plus, LogOut } from 'lucide-react';
 
 export default function Header({ onQuickIntake }) {
   const { user, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const displayName = (() => {
+    if (user?.full_name?.trim()) return user.full_name.trim();
+    if (user?.email) {
+      return user.email
+        .split('@')[0]
+        .replace(/[._-]/g, ' ')
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+    return 'User';
+  })();
+
+  const initial = displayName.charAt(0).toUpperCase();
+
   return (
-    <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-20">
-      {/* Search Input with ⌘ K shortcut */}
-      <div className="flex-1 max-w-xl">
+    <header className="h-16 bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-20 flex items-center justify-between px-6">
+      {/* Search Input */}
+      <div className="flex-1 max-w-md">
         <div className="relative flex items-center">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 pointer-events-none" />
+          <Search className="w-4 h-4 absolute left-3 text-slate-400 pointer-events-none" />
           <input
             type="text"
-            placeholder="Search papers, questions, LaTeX formulas..."
-            className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-14 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all"
+            placeholder="Search questions, documents, answer keys..."
+            className="w-full pl-9 pr-4 py-1.5 rounded-lg bg-slate-100/70 border border-slate-200/70 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 focus:bg-white transition-all"
           />
-          <div className="absolute right-2.5 flex items-center gap-1">
-            <kbd className="text-[10px] font-mono text-slate-400 bg-white border border-slate-200 rounded px-1.5 py-0.5 shadow-2xs">
-              ⌘
-            </kbd>
-            <kbd className="text-[10px] font-mono text-slate-400 bg-white border border-slate-200 rounded px-1.5 py-0.5 shadow-2xs">
-              K
-            </kbd>
-          </div>
         </div>
       </div>
 
-      {/* Right Action Bar */}
-      <div className="flex items-center gap-4">
+      {/* Right Controls */}
+      <div className="flex items-center gap-3">
         {/* Quick Intake Button */}
         <button
           onClick={onQuickIntake}
@@ -52,14 +57,11 @@ export default function Header({ onQuickIntake }) {
             className="flex items-center gap-2.5 p-1 pr-2 rounded-lg hover:bg-slate-100/70 transition-colors text-left"
           >
             <div className="w-8 h-8 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-emerald-800 font-bold text-xs">
-              {user?.full_name ? user.full_name.charAt(0).toUpperCase() : 'A'}
+              {initial}
             </div>
             <div className="hidden md:block">
               <div className="text-xs font-bold text-slate-900 leading-tight">
-                {user?.full_name || 'Ankit Sharma'}
-              </div>
-              <div className="text-[10px] font-medium text-slate-400 leading-tight">
-                Full Stack Lead
+                {displayName}
               </div>
             </div>
           </button>

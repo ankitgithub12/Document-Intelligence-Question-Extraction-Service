@@ -3,6 +3,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.openapi.docs import get_redoc_html
 
 from app.core.config import settings
 from app.core.logging import setup_logging
@@ -20,9 +21,18 @@ app = FastAPI(
     ),
     version="1.0.0",
     docs_url="/docs",
-    redoc_url="/redoc",
+    redoc_url=None,
     openapi_url="/openapi.json",
 )
+
+@app.get("/redoc", include_in_schema=False)
+async def redoc_html():
+    """Serve ReDoc documentation using the stable official Redocly CDN."""
+    return get_redoc_html(
+        openapi_url=app.openapi_url,
+        title=f"{app.title} - ReDoc",
+        redoc_js_url="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js",
+    )
 
 # CORS
 app.add_middleware(

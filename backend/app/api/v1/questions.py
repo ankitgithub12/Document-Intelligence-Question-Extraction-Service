@@ -60,6 +60,8 @@ async def list_questions(
     question_type: Optional[str] = Query(None, description="Filter by question type"),
     status: Optional[str] = Query(None, description="Filter by status"),
     review_required: Optional[bool] = Query(None, description="Filter by review required"),
+    min_confidence: Optional[float] = Query(None, description="Filter by minimum confidence"),
+    max_confidence: Optional[float] = Query(None, description="Filter by maximum confidence"),
     db: AsyncSession = Depends(get_db),
     user_id: UUID = Depends(get_current_user_id),
 ):
@@ -70,7 +72,14 @@ async def list_questions(
 
     q_repo = QuestionRepository(db)
     questions, total = await q_repo.list_by_document(
-        document_id, page, page_size, question_type, status, review_required
+        document_id,
+        page,
+        page_size,
+        question_type,
+        status,
+        review_required,
+        min_confidence,
+        max_confidence,
     )
 
     data = [_build_question_response(q, doc.original_filename) for q in questions]

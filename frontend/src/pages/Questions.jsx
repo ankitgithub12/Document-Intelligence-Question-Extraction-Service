@@ -64,9 +64,15 @@ export default function Questions() {
         const filters = {};
         if (typeFilter) filters.question_type = typeFilter;
         if (confidenceFilter === 'HIGH') filters.min_confidence = 0.85;
-        if (confidenceFilter === 'REVIEW') filters.review_required = true;
+        if (confidenceFilter === 'MEDIUM') {
+          filters.min_confidence = 0.60;
+          filters.max_confidence = 0.85;
+        }
+        if (confidenceFilter === 'REVIEW') {
+          filters.max_confidence = 0.60;
+        }
 
-        const res = await getQuestions(docId, page, 100, filters);
+        const res = await getQuestions(docId, page, 200, filters);
         setQuestions(res.data.data || []);
         setTotal(res.data.total || 0);
       } catch (err) {
@@ -79,13 +85,34 @@ export default function Questions() {
     fetchQuestions();
   }, [id, selectedDocId, page, typeFilter, confidenceFilter]);
 
-  // Client-side search filtering by question text or option
+  // Combined client-side filtering for immediate, accurate response
   const filteredQuestions = questions.filter((q) => {
-    if (!searchQuery.trim()) return true;
-    const query = searchQuery.toLowerCase();
-    const matchesText = (q.question_text || q.question || '').toLowerCase().includes(query);
-    const matchesOption = q.options?.some((o) => (o.text || '').toLowerCase().includes(query));
-    return matchesText || matchesOption;
+    // 1. Search Query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      const matchesText = (q.question_text || q.question || '').toLowerCase().includes(query);
+      const matchesOption = q.options?.some((o) => (o.text || '').toLowerCase().includes(query));
+      const matchesNum = String(q.question_number || '').includes(query);
+      if (!matchesText && !matchesOption && !matchesNum) return false;
+    }
+
+    // 2. Question Type Filter
+    if (typeFilter) {
+      const qType = (q.question_type || '').toUpperCase();
+      if (qType !== typeFilter.toUpperCase()) return false;
+    }
+
+    // 3. Confidence Filter
+    const conf = q.confidence !== undefined && q.confidence !== null ? q.confidence : 0.9;
+    if (confidenceFilter === 'HIGH') {
+      if (conf < 0.85) return false;
+    } else if (confidenceFilter === 'MEDIUM') {
+      if (conf < 0.60 || conf >= 0.85) return false;
+    } else if (confidenceFilter === 'REVIEW') {
+      if (conf >= 0.60 && !q.review_required) return false;
+    }
+
+    return true;
   });
 
   // Calculate live stats for the inspected document
@@ -173,7 +200,7 @@ export default function Questions() {
           {questions.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
               <span className="inline-flex items-center text-[11px] font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md">
-                Total: {questions.length}
+                Showing: {filteredQuestions.length} of {questions.length}
               </span>
               <span className="inline-flex items-center text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-md">
                 MCQs: {mcqCount}
@@ -191,7 +218,7 @@ export default function Questions() {
         {/* Search & Filter Bar */}
         <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-3 border-t border-slate-100">
           {/* Search Query */}
-          <div className="sm:col-span-6 relative">
+          <div className="sm:col-span-5 relative">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
             <input
               type="text"
@@ -211,6 +238,7 @@ export default function Questions() {
             >
               <option value="">All Question Types</option>
               <option value="MCQ">Multiple Choice (MCQ)</option>
+              <option value="SUBJECTIVE">Subjective / Descriptive</option>
               <option value="TRUE_FALSE">True / False</option>
               <option value="SHORT_ANSWER">Short Answer</option>
             </select>
@@ -225,8 +253,26 @@ export default function Questions() {
             >
               <option value="">All Confidence Levels</option>
               <option value="HIGH">High Confidence (&gt; 85%)</option>
+              <option value="MEDIUM">Medium Confidence (60% - 85%)</option>
               <option value="REVIEW">Needs Review (&lt; 60%)</option>
             </select>
+          </div>
+
+          {/* Clear Filter Button */}
+          <div className="sm:col-span-1 flex items-center justify-end">
+            {(Boolean(typeFilter) || Boolean(confidenceFilter) || Boolean(searchQuery)) && (
+              <button
+                onClick={() => {
+                  setTypeFilter('');
+                  setConfidenceFilter('');
+                  setSearchQuery('');
+                }}
+                title="Reset all filters"
+                className="text-[11px] font-bold text-red-600 hover:text-red-700 hover:bg-red-50 px-2 py-1.5 rounded-lg border border-red-200 transition-colors cursor-pointer w-full text-center"
+              >
+                Reset
+              </button>
+            )}
           </div>
         </div>
       </div>

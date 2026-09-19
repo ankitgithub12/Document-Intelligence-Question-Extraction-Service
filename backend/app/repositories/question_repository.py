@@ -59,6 +59,8 @@ class QuestionRepository:
         question_type: Optional[str] = None,
         status_filter: Optional[str] = None,
         review_required: Optional[bool] = None,
+        min_confidence: Optional[float] = None,
+        max_confidence: Optional[float] = None,
     ) -> tuple[list[Question], int]:
         query = (
             select(Question)
@@ -76,6 +78,12 @@ class QuestionRepository:
         if review_required is not None:
             query = query.where(Question.review_required == review_required)
             count_query = count_query.where(Question.review_required == review_required)
+        if min_confidence is not None:
+            query = query.where(Question.confidence >= min_confidence)
+            count_query = count_query.where(Question.confidence >= min_confidence)
+        if max_confidence is not None:
+            query = query.where(Question.confidence <= max_confidence)
+            count_query = count_query.where(Question.confidence <= max_confidence)
 
         query = query.order_by(Question.question_number.asc().nulls_last(), Question.created_at)
         query = query.offset((page - 1) * page_size).limit(page_size)

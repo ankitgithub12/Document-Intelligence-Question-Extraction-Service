@@ -23,3 +23,12 @@ celery_app.conf.update(
     task_default_retry_delay=30,
     task_max_retries=3,
 )
+
+# Support Upstash or cloud Redis over TLS (rediss://)
+if settings.CELERY_BROKER_URL.startswith("rediss://"):
+    import ssl
+    celery_app.conf.update(
+        broker_use_ssl={"ssl_cert_reqs": ssl.CERT_NONE},
+        redis_backend_use_ssl={"ssl_cert_reqs": ssl.CERT_NONE},
+    )
+

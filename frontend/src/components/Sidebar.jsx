@@ -20,6 +20,7 @@ export default function Sidebar() {
     { name: 'Documents Vault & Upload', path: '/documents', icon: FolderKanban },
     { name: 'Question Inspector', path: '/questions', icon: FileSearch },
     { name: 'Review Items', path: '/review', icon: Webhook },
+    { name: 'Settings & Analytics', path: '/settings', icon: Sliders },
   ];
 
   return (
@@ -81,11 +82,6 @@ export default function Sidebar() {
                 </NavLink>
               );
             })}
-
-            <div className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-xs font-semibold text-slate-400 hover:text-slate-600 hover:bg-slate-50 cursor-pointer">
-              <Sliders className="w-4 h-4 text-slate-400" />
-              <span>Settings & Analytics</span>
-            </div>
           </nav>
         </div>
       </div>

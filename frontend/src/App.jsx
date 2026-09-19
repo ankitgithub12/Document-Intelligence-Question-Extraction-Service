@@ -9,6 +9,7 @@ import Documents from './pages/Documents';
 import DocumentDetails from './pages/DocumentDetails';
 import Questions from './pages/Questions';
 import Review from './pages/Review';
+import SettingsAnalytics from './pages/SettingsAnalytics';
 
 export default function App() {
   const { user } = useAuth();
@@ -86,6 +87,26 @@ export default function App() {
             <ProtectedRoute>
               <AppLayout>
                 <Review />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <SettingsAnalytics />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <SettingsAnalytics />
               </AppLayout>
             </ProtectedRoute>
           }

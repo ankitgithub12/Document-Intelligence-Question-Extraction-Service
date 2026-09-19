@@ -7,6 +7,7 @@ from app.api.v1.questions import router as questions_router
 from app.api.v1.answers import router as answers_router
 from app.api.v1.review import router as review_router
 from app.api.v1.relationships import router as relationships_router
+from app.api.v1.analytics import router as analytics_router
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -16,3 +17,4 @@ api_router.include_router(questions_router)
 api_router.include_router(answers_router)
 api_router.include_router(review_router)
 api_router.include_router(relationships_router)
+api_router.include_router(analytics_router)

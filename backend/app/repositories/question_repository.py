@@ -116,6 +116,48 @@ class QuestionRepository:
 
         return items, total
 
+    async def get_user_review_items(
+        self, user_id: UUID, page: int = 1, page_size: int = 50,
+        resolved: Optional[bool] = None, doc_id: Optional[UUID] = None,
+    ) -> tuple[list[ReviewItem], int]:
+        from app.models.document import Document
+        query = (
+            select(ReviewItem)
+            .join(Document, ReviewItem.document_id == Document.id)
+            .where(Document.user_id == user_id)
+        )
+        count_query = (
+            select(func.count(ReviewItem.id))
+            .join(Document, ReviewItem.document_id == Document.id)
+            .where(Document.user_id == user_id)
+        )
+
+        if doc_id is not None:
+            query = query.where(ReviewItem.document_id == doc_id)
+            count_query = count_query.where(ReviewItem.document_id == doc_id)
+
+        if resolved is not None:
+            query = query.where(ReviewItem.resolved == resolved)
+            count_query = count_query.where(ReviewItem.resolved == resolved)
+
+        query = query.order_by(ReviewItem.created_at.desc())
+        query = query.offset((page - 1) * page_size).limit(page_size)
+
+        result = await self.db.execute(query)
+        items = list(result.scalars().all())
+
+        count_result = await self.db.execute(count_query)
+        total = count_result.scalar() or 0
+
+        return items, total
+
+    async def update_review_item_status(self, review_id: UUID, resolved: bool) -> Optional[ReviewItem]:
+        item = await self.get_review_item_by_id(review_id)
+        if item:
+            item.resolved = resolved
+            await self.db.flush()
+        return item
+
     async def get_review_item_by_id(self, review_id: UUID) -> Optional[ReviewItem]:
         result = await self.db.execute(
             select(ReviewItem).where(ReviewItem.id == review_id)

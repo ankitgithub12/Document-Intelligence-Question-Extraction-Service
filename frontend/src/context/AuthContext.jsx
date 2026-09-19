@@ -44,11 +44,12 @@ export function AuthProvider({ children }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-dark-950">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-400" />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="w-8 h-8 rounded-full border-2 border-slate-200 border-t-emerald-600 animate-spin" />
       </div>
     )
   }
+
 
   return (
     <AuthContext.Provider value={{ user, login, register, logout }}>

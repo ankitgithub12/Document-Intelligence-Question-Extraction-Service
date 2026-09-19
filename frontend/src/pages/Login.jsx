@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { AlertCircle, Loader2, ArrowRight, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -15,12 +17,32 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+
+    const cleanEmail = email.trim().toLowerCase();
+    if (!cleanEmail) {
+      setError('Email address is required');
+      return;
+    }
+    if (!EMAIL_REGEX.test(cleanEmail)) {
+      setError('Please enter a valid email address (e.g. name@example.com)');
+      return;
+    }
+    if (!password) {
+      setError('Password is required');
+      return;
+    }
+
     setLoading(true);
     try {
-      await login(email, password);
+      await login(cleanEmail, password);
       navigate('/');
     } catch (err) {
-      const msg = err.response?.data?.detail?.error?.message || err.response?.data?.detail || 'Invalid email or password';
+      const msg =
+        err.response?.data?.detail?.error?.message ||
+        (Array.isArray(err.response?.data?.detail)
+          ? err.response?.data?.detail[0]?.msg
+          : err.response?.data?.detail) ||
+        'Invalid email or password. Please try again.';
       setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
     } finally {
       setLoading(false);

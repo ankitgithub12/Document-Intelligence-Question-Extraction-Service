@@ -53,8 +53,10 @@ class Settings(BaseSettings):
     CONFIDENCE_EXTRACTED_THRESHOLD: float = 0.85
     CONFIDENCE_PARTIAL_THRESHOLD: float = 0.60
 
-    # CORS
-    CORS_ORIGINS: str = "http://localhost:5173,http://localhost:3000"
+    # CORS & Production Domains (configure in .env)
+    CORS_ORIGINS: str = ""
+    APP_URL: Optional[str] = None
+    FRONTEND_URL: Optional[str] = None
 
     # Celery
     CELERY_BROKER_URL: str = "redis://redis:6379/0"
@@ -70,7 +72,9 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins_list(self) -> list[str]:
-        return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
+        if not self.CORS_ORIGINS or self.CORS_ORIGINS.strip() == "*":
+            return ["*"]
+        return [origin.strip() for origin in self.CORS_ORIGINS.split(",") if origin.strip()]
 
     class Config:
         env_file = ".env"

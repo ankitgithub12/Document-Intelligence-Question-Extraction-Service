@@ -332,7 +332,12 @@ class OpenAIProvider(AIProvider):
         if (settings.AI_PROVIDER or "").lower() == "openrouter" or (base_url and "openrouter" in base_url):
             if not base_url:
                 base_url = "https://openrouter.ai/api/v1"
-            headers = {"HTTP-Referer": "http://localhost:8000", "X-Title": "DocIntel"}
+            referer = (
+                settings.APP_URL
+                or settings.FRONTEND_URL
+                or (settings.cors_origins_list[0] if settings.cors_origins_list and settings.cors_origins_list[0] != "*" else "https://docintel.io")
+            )
+            headers = {"HTTP-Referer": referer, "X-Title": "DocIntel"}
 
         self.client = openai.OpenAI(
             api_key=settings.AI_API_KEY,

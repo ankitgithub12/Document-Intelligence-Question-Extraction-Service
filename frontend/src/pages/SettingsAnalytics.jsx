@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { getAnalyticsSummary } from '../api/analyticsApi';
+import { API_BASE_URL } from '../api/axios';
 import {
   Sliders,
   BarChart3,
@@ -641,7 +642,7 @@ export default function SettingsAnalytics() {
             </div>
 
             <div className="bg-slate-50 p-3 rounded-lg border border-slate-200 text-xs text-slate-600 font-mono">
-              curl -X GET http://localhost:8000/api/v1/documents \<br />
+              curl -X GET {(API_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : ''))}/api/v1/documents \<br />
               &nbsp;&nbsp;-H "Authorization: Bearer &lt;YOUR_TOKEN&gt;"
             </div>
           </div>

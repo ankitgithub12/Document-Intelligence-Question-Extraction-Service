@@ -50,13 +50,28 @@ export default function Dashboard() {
       const elapsed = Math.round(performance.now() - startTime);
       setPipelineLatency(`${Math.max(8, elapsed)}ms`);
 
-      // Gather real questions across completed documents
-      const completedDocs = docs.filter((d) => d.status === 'COMPLETED');
+      // Gather real questions across documents that have extracted questions
+      const candidateDocs = docs.filter(
+        (d) =>
+          (d.question_count && d.question_count > 0) ||
+          d.status === 'COMPLETED' ||
+          d.status === 'REVIEW_REQUIRED'
+      );
+      const docsToScan = candidateDocs.length > 0 ? candidateDocs : docs;
+
       let gatheredQuestions = [];
-      for (const doc of completedDocs.slice(0, 3)) {
+      for (const doc of docsToScan.slice(0, 4)) {
         try {
           const qRes = await getQuestions(doc.id, 1, 20);
-          gatheredQuestions = gatheredQuestions.concat(qRes.data.data || []);
+          const qList = qRes.data.data || [];
+          if (qList.length > 0) {
+            gatheredQuestions = gatheredQuestions.concat(
+              qList.map((q) => ({
+                ...q,
+                doc_name: doc.original_filename,
+              }))
+            );
+          }
         } catch {
           // continue
         }
@@ -755,36 +770,42 @@ export default function Dashboard() {
                       {q.question_text || q.question}
                     </p>
 
-                    {/* Options Grid */}
+                    {/* Options / Samples Grid */}
                     {q.options?.length > 0 && (
-                      <div className="grid grid-cols-2 gap-1.5 pt-1 text-[11px]">
-                        {q.options.slice(0, 4).map((opt) => (
-                          <div
-                            key={opt.key}
-                            className={`p-1.5 border rounded font-mono truncate ${
-                              ansValue === opt.key
-                                ? 'bg-emerald-50/80 border-emerald-300 text-emerald-900 font-bold'
-                                : 'bg-slate-50 border-slate-200 text-slate-700'
-                            }`}
-                          >
-                            <span className="font-bold mr-1 text-emerald-700">
-                              {opt.key}:
-                            </span>
-                            {opt.text}
-                          </div>
-                        ))}
+                      <div className="grid grid-cols-1 gap-1.5 pt-1 text-[11px]">
+                        {q.options.slice(0, 3).map((opt) => {
+                          const isSelected =
+                            ansValue === opt.key ||
+                            (typeof ansValue === 'string' &&
+                              opt.text?.toLowerCase().includes(ansValue.toLowerCase()));
+                          return (
+                            <div
+                              key={opt.key}
+                              className={`p-1.5 border rounded truncate transition-colors ${
+                                isSelected
+                                  ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-semibold'
+                                  : 'bg-slate-50 border-slate-200 text-slate-700'
+                              }`}
+                            >
+                              <span className="font-bold mr-1.5 text-emerald-700">
+                                {opt.key}:
+                              </span>
+                              {opt.text}
+                            </div>
+                          );
+                        })}
                       </div>
                     )}
 
                     <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
-                      <span className="text-emerald-700 font-bold flex items-center gap-1">
-                        ✓ Key Linked {ansValue ? `(Option ${ansValue})` : ''}
+                      <span className="text-emerald-700 font-bold flex items-center gap-1 truncate max-w-[180px]">
+                        ✓ {ansValue ? ansValue : 'Answer Recorded'}
                       </span>
                       <Link
-                        to="/questions"
-                        className="text-slate-400 hover:text-slate-600 font-medium"
+                        to={`/questions${q.document_id ? `?doc=${q.document_id}` : ''}`}
+                        className="text-emerald-600 hover:text-emerald-700 font-semibold shrink-0"
                       >
-                        Inspect
+                        Inspect →
                       </Link>
                     </div>
                   </div>

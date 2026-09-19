@@ -40,6 +40,10 @@ anthropic==0.42.0
 
 # HTTP
 httpx==0.28.1
+requests==2.32.3
+
+# Cloud Storage
+cloudinary==1.41.0
 
 # Utilities
 python-dotenv==1.0.1

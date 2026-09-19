@@ -30,8 +30,14 @@ class Settings(BaseSettings):
     ALLOWED_EXTENSIONS: str = "pdf,jpg,jpeg,png"
 
     # Storage
-    STORAGE_PROVIDER: str = "local"
+    STORAGE_PROVIDER: str = "cloudinary"
     LOCAL_STORAGE_PATH: str = "./storage"
+
+    # Cloudinary
+    CLOUDINARY_CLOUD_NAME: Optional[str] = ""
+    CLOUDINARY_API_KEY: Optional[str] = ""
+    CLOUDINARY_API_SECRET: Optional[str] = ""
+    CLOUDINARY_FOLDER: str = "document-intelligence"
 
     # OCR
     OCR_PROVIDER: str = "tesseract"

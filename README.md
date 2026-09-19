@@ -2,6 +2,16 @@
 
 A production-oriented full-stack application that accepts examination/question-bank PDFs and images, processes them asynchronously, extracts structured questions with options, answers, confidence scores, and review items, and exposes results through a clean REST API with a React dashboard.
 
+## 🌐 Live Production Deployments
+
+| Component | Service Provider | Live URL |
+|---|---|---|
+| **Frontend Web Application** | Vercel | [https://frontend-five-jade-16.vercel.app](https://frontend-five-jade-16.vercel.app) |
+| **Backend REST API** | Render | [https://docai-backend-vl7c.onrender.com](https://docai-backend-vl7c.onrender.com) |
+| **Swagger Interactive API Docs** | Render | [https://docai-backend-vl7c.onrender.com/docs](https://docai-backend-vl7c.onrender.com/docs) |
+| **ReDoc API Reference** | Render | [https://docai-backend-vl7c.onrender.com/redoc](https://docai-backend-vl7c.onrender.com/redoc) |
+| **System Health Check** | Render | [https://docai-backend-vl7c.onrender.com/health](https://docai-backend-vl7c.onrender.com/health) |
+
 ## Features
 
 - **Document Upload**: Accept PDF, JPG, JPEG, PNG files with full validation

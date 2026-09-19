@@ -1,19 +1,24 @@
+import React from 'react';
+
 export default function ConfidenceBadge({ confidence, status }) {
-  let color = 'bg-green-500/20 text-green-400 border-green-500/30'
-  let label = status || 'EXTRACTED'
+  let color = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+  let dotColor = 'bg-emerald-500';
+  let label = status || 'EXTRACTED';
 
   if (confidence < 0.6) {
-    color = 'bg-red-500/20 text-red-400 border-red-500/30'
-    label = status || 'REVIEW_REQUIRED'
+    color = 'bg-red-50 text-red-700 border-red-200';
+    dotColor = 'bg-red-500';
+    label = status || 'REVIEW_REQUIRED';
   } else if (confidence < 0.85) {
-    color = 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-    label = status || 'PARTIAL'
+    color = 'bg-amber-50 text-amber-700 border-amber-200';
+    dotColor = 'bg-amber-500';
+    label = status || 'PARTIAL';
   }
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${color}`}>
-      <span className="w-1.5 h-1.5 rounded-full bg-current" />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${color}`}>
+      <span className={`w-1.5 h-1.5 rounded-full ${dotColor}`} />
       {label} ({Math.round(confidence * 100)}%)
     </span>
-  )
+  );
 }

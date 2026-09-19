@@ -45,6 +45,11 @@ class StorageProvider(ABC):
         """Get the full path/URL for processing workers."""
         return path
 
+    def get_local_path(self, path: str) -> str:
+        """Get the local filesystem path for creating or reading local scratch files."""
+        return self.get_full_path(path)
+
+
 
 class LocalStorageProvider(StorageProvider):
     """Local filesystem storage provider."""
@@ -208,6 +213,13 @@ class CloudinaryStorageProvider(StorageProvider):
             cache_path.parent.mkdir(parents=True, exist_ok=True)
             cache_path.write_bytes(content)
         return str(cache_path)
+
+    def get_local_path(self, path: str) -> str:
+        """Get the local filesystem path without downloading (for generating new files on disk)."""
+        cache_path = self._temp_dir / path.replace("/", os.sep)
+        cache_path.parent.mkdir(parents=True, exist_ok=True)
+        return str(cache_path)
+
 
     def get_url(self, path: str) -> str:
         """Get the public Cloudinary URL for a file."""

@@ -308,7 +308,8 @@ def _process_pdf(session: Session, doc: Document, file_path: str) -> list[dict]:
             # Render page to image
             img_filename = f"{doc.id}_page_{page_num}.png"
             img_storage_path = f"pages/{img_filename}"
-            img_full_path = storage.get_full_path(img_storage_path)
+            img_full_path = storage.get_local_path(img_storage_path)
+
 
             Path(img_full_path).parent.mkdir(parents=True, exist_ok=True)
             pdf_svc.render_page_to_image(file_path, i, img_full_path)

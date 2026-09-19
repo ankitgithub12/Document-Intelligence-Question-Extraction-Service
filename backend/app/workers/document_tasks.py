@@ -153,10 +153,21 @@ def process_document(self, document_id: str):
             review_required = confidence_svc.needs_review(confidence)
 
             # Determine answer info
-            answer_value = match["answer"] if match and match["status"] == "MATCHED" else None
-            answer_status = match["status"] if match else AnswerStatus.NOT_AVAILABLE
-            answer_confidence = match["confidence"] if match else None
-            answer_source_page = match.get("source_page") if match else None
+            if match and match["status"] == "MATCHED":
+                answer_value = match["answer"]
+                answer_status = match["status"]
+                answer_confidence = match["confidence"]
+                answer_source_page = match.get("source_page")
+            elif getattr(eq, "answer", None):
+                answer_value = eq.answer
+                answer_status = AnswerStatus.MATCHED
+                answer_confidence = 0.95
+                answer_source_page = eq.source_pages[0] if eq.source_pages else None
+            else:
+                answer_value = None
+                answer_status = match["status"] if match else AnswerStatus.NOT_AVAILABLE
+                answer_confidence = match["confidence"] if match else None
+                answer_source_page = match.get("source_page") if match else None
 
             # Validate
             validation_issues = validation_svc.validate_question(eq)

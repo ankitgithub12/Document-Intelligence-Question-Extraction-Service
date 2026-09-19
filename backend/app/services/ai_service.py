@@ -32,6 +32,7 @@ class ExtractedQuestion:
     confidence: float = 0.0
     source_pages: list[int] = field(default_factory=list)
     is_complete: bool = True
+    answer: Optional[str] = None
 
 
 @dataclass
@@ -369,6 +370,7 @@ Return ONLY valid JSON array. Do not invent content not present in the text."""
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.1,
                 response_format={"type": "json_object"},
+                timeout=15,
             )
             content = response.choices[0].message.content
             data = json.loads(content)
@@ -388,10 +390,11 @@ Return ONLY valid JSON array. Do not invent content not present in the text."""
                     confidence=0.9,
                     source_pages=[page_number],
                     is_complete=q.get("is_complete", True),
+                    answer=q.get("answer"),
                 ))
             return questions
         except Exception as e:
-            logger.error("openai_extraction_failed", error=str(e))
+            logger.warning("openai_extraction_fallback_to_heuristic", error=str(e))
             # Fall back to heuristic
             fallback = HeuristicAIProvider()
             return fallback.extract_questions(text, page_number)
@@ -414,6 +417,7 @@ Return ONLY valid JSON array. If no answer key is found, return empty array."""
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.1,
                 response_format={"type": "json_object"},
+                timeout=10,
             )
             content = response.choices[0].message.content
             data = json.loads(content)

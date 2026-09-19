@@ -50,6 +50,7 @@ class QuestionMerger:
                         confidence=min(current.confidence, next_q.confidence) * 0.95,
                         source_pages=sorted(set(current.source_pages + next_q.source_pages)),
                         is_complete=next_q.is_complete,
+                        answer=current.answer or next_q.answer,
                     )
 
                     # Could be a 3+ page question — keep checking
@@ -70,6 +71,10 @@ class QuestionMerger:
 
     def _should_merge(self, current: ExtractedQuestion, next_q: ExtractedQuestion) -> bool:
         """Determine if two sequential questions should be merged."""
+        # Never merge if the next item is clearly an independent numbered question
+        if next_q.question_number:
+            return False
+
         # If current is explicitly marked incomplete
         if not current.is_complete:
             return True

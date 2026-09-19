@@ -327,8 +327,20 @@ class OpenAIProvider(AIProvider):
 
     def __init__(self):
         import openai
-        self.client = openai.OpenAI(api_key=settings.AI_API_KEY)
+        base_url = settings.AI_BASE_URL
+        headers = {}
+        if (settings.AI_PROVIDER or "").lower() == "openrouter" or (base_url and "openrouter" in base_url):
+            if not base_url:
+                base_url = "https://openrouter.ai/api/v1"
+            headers = {"HTTP-Referer": "http://localhost:8000", "X-Title": "DocIntel"}
+
+        self.client = openai.OpenAI(
+            api_key=settings.AI_API_KEY,
+            base_url=base_url or None,
+            default_headers=headers or None,
+        )
         self.model = settings.AI_MODEL or "gpt-4o-mini"
+
 
     def extract_questions(self, text: str, page_number: int) -> list[ExtractedQuestion]:
         """Use OpenAI to extract questions from text."""
@@ -428,11 +440,12 @@ def get_ai_provider() -> AIProvider:
     """Factory to get the configured AI provider."""
     provider = (settings.AI_PROVIDER or "").lower().strip()
 
-    if provider == "openai" and settings.AI_API_KEY:
+    if provider in ("openai", "openrouter") and settings.AI_API_KEY:
         try:
             return OpenAIProvider()
         except Exception as e:
-            logger.warning("openai_init_failed", error=str(e))
+            logger.warning("ai_provider_init_failed", error=str(e))
+
 
     # Default: heuristic fallback (no API key needed)
     return HeuristicAIProvider()

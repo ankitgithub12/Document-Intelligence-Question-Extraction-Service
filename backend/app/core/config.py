@@ -46,6 +46,8 @@ class Settings(BaseSettings):
     AI_PROVIDER: Optional[str] = ""
     AI_API_KEY: Optional[str] = ""
     AI_MODEL: Optional[str] = ""
+    AI_BASE_URL: Optional[str] = ""
+
 
     # Confidence Thresholds
     CONFIDENCE_EXTRACTED_THRESHOLD: float = 0.85

@@ -261,7 +261,11 @@ class HeuristicAIProvider(AIProvider):
         for pattern in self.OPTION_PATTERNS:
             match = re.match(pattern, line)
             if match:
-                return (match.group(1), match.group(2).strip())
+                groups = match.groups()
+                if len(groups) >= 2:
+                    return (groups[0], groups[1].strip())
+                elif len(groups) == 1:
+                    return (groups[0], "")
         return None
 
     def _detect_type(self, q: ExtractedQuestion) -> str:

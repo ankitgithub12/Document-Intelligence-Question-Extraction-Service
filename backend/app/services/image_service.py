@@ -21,8 +21,8 @@ class ImageService:
         # Convert to grayscale
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # Denoise
-        denoised = cv2.fastNlMeansDenoising(gray, h=10)
+        # Fast denoise (Gaussian blur is ~400x faster than fastNlMeans on full-page images)
+        denoised = cv2.GaussianBlur(gray, (3, 3), 0)
 
         # Adaptive thresholding for better text contrast
         thresh = cv2.adaptiveThreshold(
